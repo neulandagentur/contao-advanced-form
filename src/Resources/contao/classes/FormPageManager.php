@@ -15,7 +15,7 @@ use Contao\FormModel;
 use Contao\Input;
 use Contao\System;
 use Contao\Widget;
-use Haste\Util\Url;
+use Codefog\HasteBundle\UrlParser;
 
 class FormPageManager
 {
@@ -221,14 +221,15 @@ class FormPageManager
     public function getUrlForStep($step)
     {
         $stepParam = $this->getStepParam();
+        $urlParser = System::getContainer()->get(UrlParser::class);
 
         if ($step === '')
         {
-            $url = Url::removeQueryString([$stepParam]);
+            $url = $urlParser->removeQueryString([$stepParam]);
         }
         else
         {
-            $url = Url::addQueryString($stepParam . '=' . $step);
+            $url = $urlParser->addQueryString($stepParam . '=' . $step);
         }
 
         return $url;
