@@ -520,6 +520,7 @@ class FormPageManager
      */
     public function resetPreviousStepsWereInvalid()
     {
+        dump($_SESSION['FORMSTORAGE_PSWI'][$this->objForm->id]);
         unset($_SESSION['FORMSTORAGE_PSWI'][$this->objForm->id]);
     }
 
@@ -660,9 +661,9 @@ class FormPageManager
         if (!$this->checkWidgetSubmittedInCurrentStep($objWidget)) {
 
             // Handle regular fields
-            if ($this->isStoredInData($objWidget->name, $step))
+            if ($this->isStoredInData($formField->name, $step))
             {
-                Input::setPost($formField->name, $this->fetchFromData($objWidget->name, $step));
+                Input::setPost($formField->name, $this->fetchFromData($formField->name, $step));
             }
             else
             {
@@ -670,9 +671,9 @@ class FormPageManager
             }
 
             // Handle files
-            if ($this->isStoredInData($objWidget->name, $step, 'files'))
+            if ($this->isStoredInData($formField->name, $step, 'files'))
             {
-                $_FILES[$objWidget->name] = $this->fetchFromData($objWidget->name, $step, 'files');
+                $_FILES[$formField->name] = $this->fetchFromData($formField->name, $step, 'files');
             }
 
             $fakeValidation = true;
@@ -698,9 +699,9 @@ class FormPageManager
 
         // Special hack for upload fields because they delete $_FILES and thus
         // multiple validation calls will fail - sigh
-        if ($objWidget instanceof \uploadable && isset($_SESSION['FILES'][$objWidget->name]))
+        if ($objWidget instanceof \uploadable && isset($_SESSION['FILES'][$formField->name]))
         {
-            $_FILES[$objWidget->name] = $_SESSION['FILES'][$objWidget->name];
+            $_FILES[$formField->name] = $_SESSION['FILES'][$objWidget->name];
         }
 
         return !$objWidget->hasErrors();
@@ -769,6 +770,12 @@ class FormPageManager
             return isset($_POST[$captcha['key']]);
         }
 
-        return isset($_POST[$objWidget->name]);
+        // Special handling for multiple field
+        $name = $objWidget->name;
+        if( str_ends_with($objWidget->name, '[]') ) {
+            $name = substr($objWidget->name, 0, -2);
+        }
+
+        return isset($_POST[$name]);
     }
 }

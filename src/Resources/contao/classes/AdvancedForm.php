@@ -92,9 +92,15 @@ class AdvancedForm
     {
         $manager = FormPageManager::getInstance($form);
 
-        if ($manager->isStoredInData($widget->name))
+        // Special handling for multiple field
+        $name = $widget->name;
+        if( str_ends_with($name, '[]') ) {
+            $name = substr($name, 0, -2);
+        }
+
+        if ($manager->isStoredInData($name))
         {
-            $widget->value = $manager->fetchFromData($widget->name);
+            $widget->value = $manager->fetchFromData($name);
         }
 
         return $widget;
