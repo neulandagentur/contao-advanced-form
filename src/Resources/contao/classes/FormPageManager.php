@@ -467,12 +467,14 @@ class FormPageManager
 
             $arrFormFields = array_fill_keys($arrFormFields, '');
         }
-
-        foreach ((array) $_SESSION['FORMSTORAGE'][$this->objForm->id] as $stepData)
-        {
-            $arrSubmitted = array_merge($arrSubmitted, (array) $stepData['submitted']);
-            $arrLabels    = array_merge($arrLabels, (array) $stepData['labels']);
-            $arrFiles     = array_merge($arrFiles, (array) $stepData['files']);
+        
+        if( isset($this->objForm->id,$_SESSION['FORMSTORAGE']) ) {
+            foreach ((array) $_SESSION['FORMSTORAGE'][$this->objForm->id] as $stepData)
+            {
+                $arrSubmitted = array_merge($arrSubmitted, (array) $stepData['submitted']);
+                $arrLabels    = array_merge($arrLabels, (array) $stepData['labels']);
+                $arrFiles     = array_merge($arrFiles, (array) $stepData['files']);
+            }
         }
 
         return [

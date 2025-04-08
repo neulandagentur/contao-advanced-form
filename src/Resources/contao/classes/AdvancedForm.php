@@ -54,7 +54,9 @@ class AdvancedForm
 
         if (isset($_POST['pageSwitch']) && $_POST['pageSwitch'] === 'back')
         {
-            $manager->storeData($_POST, [], (array) $_SESSION['FILES']);
+            if(isset($_SESSION['FILES'])) {
+                $manager->storeData($_POST, [], (array) $_SESSION['FILES']);
+            }
             $this->redirectToStep($manager, $manager->getPreviousStep());
         }
 
